@@ -19,14 +19,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
 
 import static com.example.fan.terrynavigation.R.id.imageView;
+import static com.example.fan.terrynavigation.R.id.nav_camera;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private  static final int ACTIVITY_START_CAMERA_APP = 0;
     Button button;
     ImageView imageView;
     static final int CAM__REQUEST = 1;
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -62,8 +69,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String path = "sdcard/camera_app/cam_image.jpg";
-        imageView.setImageDrawable(Drawable.createFromPath(path));
+        //String path = "sdcard/camera_app/cam_image.jpg";
+        //imageView.setImageDrawable(Drawable.createFromPath(path));
+        if(requestCode == ACTIVITY_START_CAMERA_APP && resultCode == RESULT_OK)
+        {
+            Toast.makeText(this,"Successfully",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -118,7 +129,14 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_helloworld) {
             fragmentManager.beginTransaction().replace(R.id.content_frame,new HelloWorld()).commit();
         } else if (id == R.id.nav_camera) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame,new Camera()).commit();
+          Camera camera = new Camera();
+           //android.app.FragmentManager fragmentManager = getFragmentManager();
+            //fragmentManager.beginTransaction().replace(R.id.content_frame,camera,camera.getTag()).commit();
+            //fragmentManager.beginTransaction().replace(R.id.content_frame,new Camera()).commit();
+           // Toast.makeText(this,"hi",Toast.LENGTH_SHORT).show();
+            Intent callCamera = new Intent();
+            callCamera.setAction(MediaStore.ACTION_IMAGE_CAPTURE); //capture an image and return it;
+            startActivityForResult(callCamera,ACTIVITY_START_CAMERA_APP);
 
         } else if (id == R.id.nav_gps) {
             fragmentManager.beginTransaction().replace(R.id.content_frame,new GPS()).commit();
@@ -132,4 +150,13 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+   /* protected void onActivityResult(int requestCode , int resultCode , Intent data)
+    {
+        if(requestCode == ACTIVITY_START_CAMERA_APP && resultCode == RESULT_OK)
+        {
+            Toast.makeText(this,"Successfully",Toast.LENGTH_SHORT).show();
+        }
+    }*/
+
+
 }
