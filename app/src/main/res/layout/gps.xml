@@ -7,4 +7,23 @@
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.MapFragment">
     </fragment>
+
+    <TextView
+        android:layout_width="168dp"
+        android:layout_height="50dp"
+        android:layout_gravity="left|top"
+        android:id="@+id/latitude"/>
+
+    <TextView
+        android:layout_width="168dp"
+        android:layout_height="50dp"
+        android:layout_gravity="right|top"
+        android:id="@+id/longitude"/>
+
+    <TextView
+        android:layout_width="168dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|center"
+        android:id="@+id/note"/>
+
 </FrameLayout>

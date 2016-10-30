@@ -1,6 +1,10 @@
 package com.example.fan.terrynavigation;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,12 +24,13 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import android.content.ContentValues;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-
+import android.util.DisplayMetrics;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import static com.example.fan.terrynavigation.R.id.imageView;
 import static com.example.fan.terrynavigation.R.id.nav_camera;
@@ -34,12 +39,19 @@ import static com.example.fan.terrynavigation.R.id.nav_camera;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private  static final int ACTIVITY_START_CAMERA_APP = 0;
+    private DisplayMetrics mPhone;
+    private final static int CAMERA = 66 ;
+    private final static int PHOTO = 99 ;
     Button button;
     ImageView imageView;
     static final int CAM__REQUEST = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //讀取手機解析度
+        mPhone = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(mPhone);
+
         button = (Button) findViewById(R.id.nav_camera);
         imageView = (ImageView)findViewById(R.id.image_view);
 
@@ -66,15 +78,21 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
-
+    public Bitmap photo;
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         //String path = "sdcard/camera_app/cam_image.jpg";
         //imageView.setImageDrawable(Drawable.createFromPath(path));
         if(requestCode == ACTIVITY_START_CAMERA_APP && resultCode == RESULT_OK)
         {
-            Toast.makeText(this,"Successfully",Toast.LENGTH_SHORT).show();
+            //取得照片路徑uri
+            Uri uri = data.getData();
         }
+        Bundle extras = data.getExtras();
+            photo = (Bitmap) extras.get("data");
+            Toast.makeText(this,"Successfully",Toast.LENGTH_SHORT).show();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -125,23 +143,38 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+
         android.app.FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager2 = getSupportFragmentManager();
         if (id == R.id.nav_helloworld) {
             fragmentManager.beginTransaction().replace(R.id.content_frame,new HelloWorld()).commit();
         } else if (id == R.id.nav_camera) {
-          Camera camera = new Camera();
-           //android.app.FragmentManager fragmentManager = getFragmentManager();
-            //fragmentManager.beginTransaction().replace(R.id.content_frame,camera,camera.getTag()).commit();
-            //fragmentManager.beginTransaction().replace(R.id.content_frame,new Camera()).commit();
-           // Toast.makeText(this,"hi",Toast.LENGTH_SHORT).show();
-            Intent callCamera = new Intent();
+            //開啟相機功能，並將拍照後的圖片存入SD卡相片集內，須由startActivityForResult且帶入
+           // requestCode進行呼叫，原因為拍照完畢後返回程式後則呼叫onActivityResult
+            ContentValues value = new ContentValues();
+            Camera camera = new Camera();
+            value.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+            Uri uri= getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    value);
+
+            Intent callCamera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             callCamera.setAction(MediaStore.ACTION_IMAGE_CAPTURE); //capture an image and return it;
+            callCamera.putExtra(MediaStore.EXTRA_OUTPUT,uri.getPath());
             startActivityForResult(callCamera,ACTIVITY_START_CAMERA_APP);
 
-        } else if (id == R.id.nav_gps) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame,new GPS()).commit();
-        } else if (id == R.id.nav_share) {
+            fragmentManager.beginTransaction().replace(R.id.content_frame,new Camera()).commit();
 
+        } else if (id == R.id.nav_gps) {
+            fragmentManager2.beginTransaction().replace(R.id.content_frame,new GPS()).commit();
+        } else if (id == R.id.nav_gallary) {
+            //開啟相簿相片集，須由startActivityForResult且帶入requestCode進行呼叫，原因
+            //為點選相片後返回程式呼叫onActivityResult
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent, PHOTO);
+
+            //fragmentManager.beginTransaction().replace(R.id.content_frame,new Gallary()).commit();
         } else if (id == R.id.nav_send) {
 
         }
@@ -150,13 +183,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-   /* protected void onActivityResult(int requestCode , int resultCode , Intent data)
-    {
-        if(requestCode == ACTIVITY_START_CAMERA_APP && resultCode == RESULT_OK)
-        {
-            Toast.makeText(this,"Successfully",Toast.LENGTH_SHORT).show();
-        }
-    }*/
+
 
 
 }
