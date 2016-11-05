@@ -25,10 +25,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.content.ContentValues;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+
 import android.util.DisplayMetrics;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -38,37 +41,27 @@ import static com.example.fan.terrynavigation.R.id.nav_camera;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private  static final int ACTIVITY_START_CAMERA_APP = 0;
-    private DisplayMetrics mPhone;
-    private final static int CAMERA = 66 ;
-    private final static int PHOTO = 99 ;
+    private static final int ACTIVITY_START_CAMERA_APP = 0;
+    // private DisplayMetrics mPhone;
     Button button;
     ImageView imageView;
     static final int CAM__REQUEST = 1;
+    //region
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //讀取手機解析度
-        mPhone = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(mPhone);
-
+        /*A structure describing general information about a display,
+        // such as its size, density, and font scaling.
+        mPhone = new DisplayMetrics(); //讀取手機解析度
+        getWindowManager().getDefaultDisplay().getMetrics(mPhone);*/
         button = (Button) findViewById(R.id.nav_camera);
-        imageView = (ImageView)findViewById(R.id.image_view);
-
+        imageView = (ImageView) findViewById(R.id.appbar_image_view);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         //建立側選單觸發器， 其中會將 DrawerLayout(layDrawer) 及 R.drawable.ic_drawer (側選單的三條線圖示)
         // 等等參數指定給 ActionBarDrawerToggle 。
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -77,21 +70,22 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
+    //endregion
     public Bitmap photo;
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //String path = "sdcard/camera_app/cam_image.jpg";
         //imageView.setImageDrawable(Drawable.createFromPath(path));
-        if(requestCode == ACTIVITY_START_CAMERA_APP && resultCode == RESULT_OK)
-        {
+        if (requestCode == ACTIVITY_START_CAMERA_APP && resultCode == RESULT_OK) {
             //取得照片路徑uri
             Uri uri = data.getData();
         }
         Bundle extras = data.getExtras();
-            photo = (Bitmap) extras.get("data");
-            Toast.makeText(this,"Successfully",Toast.LENGTH_SHORT).show();
+        photo = (Bitmap) extras.get("data");
+        Toast.makeText(this, "Successfully", Toast.LENGTH_SHORT).show();
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -111,17 +105,17 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    public File getFile()
-    {
+
+    public File getFile() {
         File folder = new File("sdcard/camera_app");
 
-        if(!folder.exists())
-        {
+        if (!folder.exists()) {
             folder.mkdir();
         }
-        File image_file = new File(folder,"cam_image.jpg");
+        File image_file = new File(folder, "cam_image.jpg");
         return image_file;
     }
+
     //處理 App icon 的動作，這樣當你觸碰 App icon 時就可以開關 drawer 了。
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -147,34 +141,16 @@ public class MainActivity extends AppCompatActivity
         android.app.FragmentManager fragmentManager = getFragmentManager();
         FragmentManager fragmentManager2 = getSupportFragmentManager();
         if (id == R.id.nav_helloworld) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame,new HelloWorld()).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new HelloWorld()).commit();
         } else if (id == R.id.nav_camera) {
-            //開啟相機功能，並將拍照後的圖片存入SD卡相片集內，須由startActivityForResult且帶入
-           // requestCode進行呼叫，原因為拍照完畢後返回程式後則呼叫onActivityResult
-            ContentValues value = new ContentValues();
-            Camera camera = new Camera();
-            value.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-            Uri uri= getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    value);
-
             Intent callCamera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             callCamera.setAction(MediaStore.ACTION_IMAGE_CAPTURE); //capture an image and return it;
-            callCamera.putExtra(MediaStore.EXTRA_OUTPUT,uri.getPath());
-            startActivityForResult(callCamera,ACTIVITY_START_CAMERA_APP);
-
-            fragmentManager.beginTransaction().replace(R.id.content_frame,new Camera()).commit();
-
+            startActivityForResult(callCamera, ACTIVITY_START_CAMERA_APP);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new Camera()).commit();
         } else if (id == R.id.nav_gps) {
-            fragmentManager2.beginTransaction().replace(R.id.content_frame,new GPS()).commit();
+            fragmentManager2.beginTransaction().replace(R.id.content_frame, new GPS()).commit();
         } else if (id == R.id.nav_gallary) {
-            //開啟相簿相片集，須由startActivityForResult且帶入requestCode進行呼叫，原因
-            //為點選相片後返回程式呼叫onActivityResult
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(intent, PHOTO);
-
-            //fragmentManager.beginTransaction().replace(R.id.content_frame,new Gallary()).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new Gallary()).commit();
         } else if (id == R.id.nav_send) {
 
         }
@@ -183,7 +159,6 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
 
 }

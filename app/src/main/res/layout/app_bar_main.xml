@@ -25,15 +25,9 @@
     <ImageView
         android:layout_width="350dp"
         android:layout_height="300dp"
-        android:id="@+id/image_view"
+        android:id="@+id/appbar_image_view"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"/>
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+
 
 </android.support.design.widget.CoordinatorLayout>
