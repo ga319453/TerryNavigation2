@@ -11,12 +11,15 @@ import android.view.ViewGroup;
  * Created by Fan on 2016/10/26.
  */
 
-public class HelloWorld extends Fragment{
+public class HelloWorld extends Fragment
+{
     View myView;
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        myView = inflater.inflate(R.layout.helloworld,container,false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        myView = inflater.inflate(R.layout.helloworld, container, false);
         return myView;
     }
 }
