@@ -12,7 +12,7 @@ import android.widget.ImageView;
  * Created by Fan on 2016/10/26.
  */
 
-public class PhotoReview extends Fragment
+public class PhotoViewFragment extends Fragment
 {
     ImageView result_photo;
     View myView;
@@ -21,7 +21,7 @@ public class PhotoReview extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        myView = inflater.inflate(R.layout.photo_review, container, false); //将一个用xml定义的布局文件查找出来
+        myView = inflater.inflate(R.layout.camera_photo_view, container, false); //将一个用xml定义的布局文件查找出来
 
         return myView;
     }

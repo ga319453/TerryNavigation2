@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+
         //沒意義
         //region
         //structure describing general information about a display,
@@ -155,19 +157,19 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager2 = getSupportFragmentManager();
         if (id == R.id.nav_helloworld)
         {
-            fragment = new HelloWorld();
+            fragment = new HelloWorldFragment();
         } else if (id == R.id.nav_camera)
         {
             Intent callCamera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             callCamera.setAction(MediaStore.ACTION_IMAGE_CAPTURE); //capture an image and return it;
             startActivityForResult(callCamera, ACTIVITY_START_CAMERA_APP);
-            fragment = new PhotoReview();
+            fragment = new PhotoViewFragment();
         } else if (id == R.id.nav_gps)
         {
-            fragmentManager2.beginTransaction().replace(R.id.content_frame, new Map()).commit();
+            fragmentManager2.beginTransaction().replace(R.id.content_frame, new MapViewFragment()).commit();
         } else if (id == R.id.nav_gallary)
         {
-            fragment = new Gallery();
+            fragment = new GalleryFragment();
         } else if (id == R.id.nav_send)
         {
 

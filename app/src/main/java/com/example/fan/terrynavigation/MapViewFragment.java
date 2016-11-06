@@ -33,7 +33,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * Created by Fan on 2016/10/26.
  */
 
-public class Map extends Fragment implements OnMapReadyCallback
+public class MapViewFragment extends Fragment implements OnMapReadyCallback
 {
     View myView;
 
@@ -74,7 +74,7 @@ public class Map extends Fragment implements OnMapReadyCallback
         super.onViewCreated(view, savedInstanceState);
         //this.getChildFragmentManager();
         //getActivity().getFragmentManager();
-        final MapFragment fragment = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
+        final com.google.android.gms.maps.MapFragment fragment = (com.google.android.gms.maps.MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map);
         fragment.getMapAsync(this);
     }
 
